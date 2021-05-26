@@ -1,11 +1,7 @@
 {
   "ExpandedNodes": [
-    "",
-    "\\Frontend.Nuxt",
-    "\\Frontend.Nuxt\\pages",
-    "\\ProjectManager.Api",
-    "\\ProjectManager.Api\\Controllers"
+    ""
   ],
-  "SelectedNode": "\\Frontend.Nuxt\\pages\\index.vue",
+  "SelectedNode": "\\ProjectManager.sln",
   "PreviewInSolutionExplorer": false
 }

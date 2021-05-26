@@ -1,20 +1,29 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using ProjectManager.Data;
 
 namespace ProjectManager.Api {
   public class Startup {
 
     private const string AllCors = "All";
 
+    public Startup(IConfiguration config) {
+      Configuration = config;
+    }
+
+    public IConfiguration Configuration { get; }
+
     public void ConfigureServices(IServiceCollection services) {
       services.AddControllers();
+       
+      services.AddDbContext<AppDbContext>(
+        options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"))
+      ); ;
 
       services.AddCors(
         options => options.AddPolicy(AllCors,
@@ -35,6 +44,17 @@ namespace ProjectManager.Api {
       app.UseEndpoints(endpoints => {
         endpoints.MapDefaultControllerRoute();
       });
+
+      UpgradeDatabase(app);
+    }
+
+    private void UpgradeDatabase(IApplicationBuilder app) {
+      using (var serviceScope = app.ApplicationServices.CreateScope()) {
+        var context = serviceScope.ServiceProvider.GetService<AppDbContext>();
+        if (context != null && context.Database != null) {
+          context.Database.Migrate();
+        }
+      }
     }
   }
 }
