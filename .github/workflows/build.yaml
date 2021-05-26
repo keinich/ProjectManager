@@ -12,8 +12,8 @@ jobs:
     - name: Print Current Directory
       run: pwd
     - name: Check Dotnet Cli
-      run: dotnet
-    - name: Check npm
-      run: npm
+      run: dotnet build
     - name: List files in Directory
-      run: ls
+      run: ls ProjectManager.Api/ -R
+    - name: Check npm
+      run: npm -v
