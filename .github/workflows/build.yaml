@@ -4,10 +4,10 @@ on: push
 
 jobs:
   build:
-  name: Greeting
-  runs-on: ubuntu-latest
-  steps: 
-  - name: Print Current Directory
-    run: pwd
-  - name: List files in Directory
-    run: ls
+    name: Greeting
+    runs-on: ubuntu-latest
+    steps: 
+    - name: Print Current Directory
+      run: pwd
+    - name: List files in Directory
+      run: ls
