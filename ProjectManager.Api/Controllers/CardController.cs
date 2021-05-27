@@ -10,10 +10,10 @@ namespace ProjectManager.Api.Controllers {
 
   [ApiController]
   [Route("api/cards")]
-  public class Cards : ControllerBase {
+  public class CardController : ControllerBase {
     private readonly AppDbContext dbContext;
 
-    public Cards(AppDbContext dbContext) {
+    public CardController(AppDbContext dbContext) {
       this.dbContext = dbContext;
     }
 

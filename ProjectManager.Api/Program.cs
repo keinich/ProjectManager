@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
@@ -10,7 +12,20 @@ using System.Threading.Tasks;
 namespace ProjectManager.Api {
   public class Program {
     public static void Main(string[] args) {
-      CreateHostBuilder(args).Build().Run();
+      var host = CreateHostBuilder(args).Build();
+
+      using (var scope = host.Services.CreateScope()) {
+        var env = scope.ServiceProvider.GetRequiredService<IWebHostEnvironment>();
+        var userMgr = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+
+        if (env.IsDevelopment()) {
+          var user = new IdentityUser("test");
+          userMgr.CreateAsync(user, "password").GetAwaiter().GetResult();
+        }
+
+      }
+
+      host.Run();
     }
 
     public static IHostBuilder CreateHostBuilder(string[] args) =>
