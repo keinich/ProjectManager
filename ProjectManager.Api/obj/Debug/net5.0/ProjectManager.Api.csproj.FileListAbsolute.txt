@@ -33,7 +33,6 @@ D:\Raftek\ProjectManager\ProjectManager.Api\bin\Debug\net5.0\Microsoft.IdentityM
 D:\Raftek\ProjectManager\ProjectManager.Api\bin\Debug\net5.0\Microsoft.IdentityModel.Protocols.dll
 D:\Raftek\ProjectManager\ProjectManager.Api\bin\Debug\net5.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
 D:\Raftek\ProjectManager\ProjectManager.Api\bin\Debug\net5.0\Microsoft.IdentityModel.Tokens.dll
-D:\Raftek\ProjectManager\ProjectManager.Api\bin\Debug\net5.0\Newtonsoft.Json.dll
 D:\Raftek\ProjectManager\ProjectManager.Api\bin\Debug\net5.0\System.Configuration.ConfigurationManager.dll
 D:\Raftek\ProjectManager\ProjectManager.Api\bin\Debug\net5.0\System.Diagnostics.DiagnosticSource.dll
 D:\Raftek\ProjectManager\ProjectManager.Api\bin\Debug\net5.0\System.IdentityModel.Tokens.Jwt.dll
@@ -54,16 +53,7 @@ D:\Raftek\ProjectManager\ProjectManager.Api\bin\Debug\net5.0\runtimes\win\lib\ne
 D:\Raftek\ProjectManager\ProjectManager.Api\obj\Debug\net5.0\ProjectManager.Api.csproj.CopyComplete
 D:\Raftek\ProjectManager\ProjectManager.Api\bin\Debug\net5.0\Humanizer.dll
 D:\Raftek\ProjectManager\ProjectManager.Api\bin\Debug\net5.0\Microsoft.EntityFrameworkCore.Design.dll
-D:\Raftek\ProjectManager\ProjectManager.Api\bin\Debug\net5.0\IdentityModel.dll
-D:\Raftek\ProjectManager\ProjectManager.Api\bin\Debug\net5.0\IdentityServer4.dll
-D:\Raftek\ProjectManager\ProjectManager.Api\bin\Debug\net5.0\IdentityServer4.AspNetIdentity.dll
-D:\Raftek\ProjectManager\ProjectManager.Api\bin\Debug\net5.0\IdentityServer4.Storage.dll
 D:\Raftek\ProjectManager\ProjectManager.Api\bin\Debug\net5.0\Microsoft.AspNetCore.Authentication.OpenIdConnect.dll
-D:\Raftek\ProjectManager\ProjectManager.Api\bin\Debug\net5.0\Microsoft.AspNetCore.Cryptography.Internal.dll
-D:\Raftek\ProjectManager\ProjectManager.Api\bin\Debug\net5.0\Microsoft.AspNetCore.Cryptography.KeyDerivation.dll
-D:\Raftek\ProjectManager\ProjectManager.Api\bin\Debug\net5.0\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
-D:\Raftek\ProjectManager\ProjectManager.Api\bin\Debug\net5.0\Microsoft.Extensions.Identity.Core.dll
-D:\Raftek\ProjectManager\ProjectManager.Api\bin\Debug\net5.0\Microsoft.Extensions.Identity.Stores.dll
 D:\Raftek\ProjectManager\ProjectManager.Api\bin\Debug\net5.0\ProjectManager.Api.Views.dll
 D:\Raftek\ProjectManager\ProjectManager.Api\bin\Debug\net5.0\ProjectManager.Api.Views.pdb
 D:\Raftek\ProjectManager\ProjectManager.Api\obj\Debug\net5.0\ProjectManager.Api.RazorAssemblyInfo.cache
@@ -75,3 +65,4 @@ D:\Raftek\ProjectManager\ProjectManager.Api\obj\Debug\net5.0\Razor\Pages\Account
 D:\Raftek\ProjectManager\ProjectManager.Api\obj\Debug\net5.0\Razor\Pages\_ViewImports.cshtml.g.cs
 D:\Raftek\ProjectManager\ProjectManager.Api\obj\Debug\net5.0\ProjectManager.Api.RazorTargetAssemblyInfo.cs
 D:\Raftek\ProjectManager\ProjectManager.Api\obj\Debug\net5.0\ProjectManager.Api.Views.pdb
+D:\Raftek\ProjectManager\ProjectManager.Api\bin\Debug\net5.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll

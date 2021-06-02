@@ -13,18 +13,6 @@ namespace ProjectManager.Api {
   public class Program {
     public static void Main(string[] args) {
       var host = CreateHostBuilder(args).Build();
-
-      using (var scope = host.Services.CreateScope()) {
-        var env = scope.ServiceProvider.GetRequiredService<IWebHostEnvironment>();
-        var userMgr = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
-
-        if (env.IsDevelopment()) {
-          var user = new IdentityUser("test");
-          userMgr.CreateAsync(user, "password").GetAwaiter().GetResult();
-        }
-
-      }
-
       host.Run();
     }
 

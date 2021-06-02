@@ -21,6 +21,9 @@ namespace ProjectManager.Api.Controllers {
     [HttpGet]
     public IEnumerable<Card> All() => dbContext.Cards;
 
+    [HttpGet("test")]
+    public string TestAuth() => "test";
+
     // /api/cards/{id}
     [HttpGet("{id}")]
     public Card Get(int id) => dbContext.Cards.FirstOrDefault(x => x.Id.Equals(id));

@@ -43,15 +43,11 @@
         "net5.0": {
           "targetAlias": "net5.0",
           "dependencies": {
-            "IdentityServer4": {
+            "Microsoft.AspNetCore.Authentication.JwtBearer": {
               "target": "Package",
-              "version": "[4.1.2, )"
+              "version": "[5.0.6, )"
             },
-            "IdentityServer4.AspNetIdentity": {
-              "target": "Package",
-              "version": "[4.1.2, )"
-            },
-            "Microsoft.AspNetCore.Identity.EntityFrameworkCore": {
+            "Microsoft.AspNetCore.Authentication.OpenIdConnect": {
               "target": "Package",
               "version": "[5.0.6, )"
             },

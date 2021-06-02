@@ -1,10 +1,9 @@
-using IdentityServer4.Models;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -29,8 +28,6 @@ namespace ProjectManager.Api {
         options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"))
       ); ;
 
-      AddIdentity(services);
-
       services.AddControllers();
 
       services.AddRazorPages();
@@ -53,9 +50,7 @@ namespace ProjectManager.Api {
 
       app.UseAuthentication();
 
-      app.UseIdentityServer();
-
-      // auth here
+      app.UseAuthorization();
 
       app.UseEndpoints(endpoints => {
         endpoints.MapDefaultControllerRoute();
@@ -63,58 +58,6 @@ namespace ProjectManager.Api {
       });
 
       UpgradeDatabase(app);
-    }
-
-    private void AddIdentity(IServiceCollection services) {
-      services.AddIdentity<IdentityUser, IdentityRole>(
-        options => {
-          if (this.env.IsDevelopment()) {
-            options.Password.RequireDigit = false;
-            options.Password.RequiredLength = 4;
-            options.Password.RequireLowercase = false;
-            options.Password.RequireUppercase = false;
-            options.Password.RequireNonAlphanumeric = false;
-          }
-          else {
-            //TODO
-          }
-        })
-        .AddEntityFrameworkStores<AppDbContext>()
-        .AddDefaultTokenProviders();
-
-      services.ConfigureApplicationCookie(config => {
-        config.LoginPath = "/Account/Login";
-      });
-
-      var identityServerBuilder = services.AddIdentityServer();
-
-      identityServerBuilder.AddAspNetIdentity<IdentityUser>();
-
-      if (env.IsDevelopment()) {
-        identityServerBuilder.AddInMemoryIdentityResources(new IdentityResource[] {
-          new IdentityResources.OpenId(),
-          new IdentityResources.Profile()
-        });
-
-        identityServerBuilder.AddInMemoryClients(new Client[] {
-          new Client {
-            ClientId = "nuxt-js-app",
-            AllowedGrantTypes = GrantTypes.Code,
-
-            RedirectUris = new[] { "http://localohst:3000" },
-            PostLogoutRedirectUris = new[] { "http://localohst:3000" },
-            AllowedCorsOrigins = new[] { "http://localohst:3000" },
-
-            RequirePkce = true,
-            AllowAccessTokensViaBrowser = true,
-            RequireConsent = false,
-            RequireClientSecret = false
-          }
-        });
-
-
-        identityServerBuilder.AddDeveloperSigningCredential();
-      }
     }
 
     private void UpgradeDatabase(IApplicationBuilder app) {

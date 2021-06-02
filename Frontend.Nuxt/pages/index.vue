@@ -1,11 +1,7 @@
 <template>
   <v-row justify="center" align="center">
     <v-col cols="12" sm="8" md="6">
-      <div class="text-center">
-        <logo />
-        <vuetify-logo />
-      </div>
-
+    
       <div v-if="cards">
         <p v-for="c in cards">
           {{c.name}}
