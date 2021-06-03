@@ -17,14 +17,27 @@
   </v-row>
 </template>
 <script>
+  import {mapState, mapActions, mapMutations} from 'vuex'
+
 export default {
+
+  computed: mapState({
+
+  }),
+
+  async fetch() {
+  },
+
   methods: {
     onClick() {
       console.log("user:", this.$auth.user);
     },
     getCards() {
-      console.log(this.$axios.get("/api/cards"))
+      var requestPath = "/api/cards/" + this.$auth.user.sub
+      // console.log(this.$axios.get("/api/cards"))
+      console.log(this.$axios.get(requestPath))
     },
   },
+
 };
 </script>
