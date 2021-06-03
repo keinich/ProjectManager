@@ -11,6 +11,8 @@
         </footer>
       </blockquote>
       <button @click="onClick">Log user</button>
+      <button @click="getCards">Get Cards</button>
+      <button @click="$auth.logout()">Logout</button>
     </v-col>
   </v-row>
 </template>
@@ -19,6 +21,9 @@ export default {
   methods: {
     onClick() {
       console.log("user:", this.$auth.user);
+    },
+    getCards() {
+      console.log(this.$axios.get("/api/cards"))
     },
   },
 };

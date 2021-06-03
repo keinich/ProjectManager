@@ -39,15 +39,27 @@ namespace ProjectManager.Api {
         )
       );
 
+
+
       services.AddAuthentication(options => {
         options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
         options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
       }).AddJwtBearer(options => {
-        var authOAuthentication = Configuration.GetSection("Authentication:Auth0");
-        options.Authority = authOAuthentication["Authority"];
-        options.Audience = authOAuthentication["Audience"];
+        //var authOAuthentication = Configuration.GetSection("Authentication:Auth0");
+        options.Authority = "https://dev-iqj5y9cp.eu.auth0.com";
+        options.Audience = "projectmanager-api";
         options.RequireHttpsMetadata = false;
       });
+
+      //services.AddAuthentication(options => {
+      //  options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+      //  options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+      //}).AddJwtBearer(options => {
+      //  var authOAuthentication = Configuration.GetSection("Authentication:Auth0");
+      //  options.Authority = authOAuthentication["Authority"];
+      //  options.Audience = authOAuthentication["Audience"];
+      //  options.RequireHttpsMetadata = false;
+      //});
     }
 
     public void Configure(IApplicationBuilder app) {

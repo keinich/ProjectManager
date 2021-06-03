@@ -9,7 +9,7 @@ using ProjectManager.Data;
 namespace ProjectManager.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20210526210654_InitialCreate")]
+    [Migration("20210603150100_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

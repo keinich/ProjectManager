@@ -4,7 +4,9 @@ using ProjectManager.Api.Models;
 using ProjectManager.Data;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace ProjectManager.Api.Controllers {
@@ -19,9 +21,12 @@ namespace ProjectManager.Api.Controllers {
     }
 
     // /api/cards
-    [Authorize]
+    //[Authorize]
     [HttpGet]
-    public IEnumerable<Card> All() => dbContext.Cards;
+    public IEnumerable<Card> All() {
+      Debug.WriteLine($"UserId: {this.User.FindFirst(ClaimTypes.NameIdentifier).Value}");
+      return dbContext.Cards;
+    }
 
     [HttpGet("test")]
     public string TestAuth() => "test";

@@ -75,7 +75,7 @@ export default {
     middleware: ['auth'],
   },
 
-  // Configure auth middleware to read the secret Auth0 values from the .env file
+  // Configure auth middleware
   auth: {
     strategies: {
       auth0: {
@@ -87,7 +87,13 @@ export default {
         grantType: 'authorization_code',
         codeChallengeMethod: 'S256',
       }
-    }
+    },    
+    redirect: {
+      callback: "/",
+      home: "/",
+      login: "/login",
+      logout: "/"
+    },
   },
 
 }
