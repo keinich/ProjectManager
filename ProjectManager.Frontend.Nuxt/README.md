@@ -1,4 +1,4 @@
-# Frontend.Nuxt
+# ProjectManager.Frontend.Nuxt
 
 ## Build Setup
 

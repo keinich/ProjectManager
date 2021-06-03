@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -26,7 +27,7 @@ namespace ProjectManager.Api {
 
       services.AddDbContext<AppDbContext>(
         options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"))
-      ); ;
+      );
 
       services.AddControllers();
 
@@ -37,6 +38,16 @@ namespace ProjectManager.Api {
           build => build.AllowAnyHeader().AllowAnyOrigin().AllowAnyMethod()
         )
       );
+
+      services.AddAuthentication(options => {
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+      }).AddJwtBearer(options => {
+        var authOAuthentication = Configuration.GetSection("Authentication:Auth0");
+        options.Authority = authOAuthentication["Authority"];
+        options.Audience = authOAuthentication["Audience"];
+        options.RequireHttpsMetadata = false;
+      });
     }
 
     public void Configure(IApplicationBuilder app) {
@@ -44,12 +55,13 @@ namespace ProjectManager.Api {
         app.UseDeveloperExceptionPage();
       }
 
+      app.UseHttpsRedirection();
+
       app.UseCors(AllCors);
 
       app.UseRouting();
 
       app.UseAuthentication();
-
       app.UseAuthorization();
 
       app.UseEndpoints(endpoints => {

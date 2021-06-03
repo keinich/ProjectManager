@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using ProjectManager.Api.Models;
 using ProjectManager.Data;
 using System;
@@ -18,6 +19,7 @@ namespace ProjectManager.Api.Controllers {
     }
 
     // /api/cards
+    [Authorize]
     [HttpGet]
     public IEnumerable<Card> All() => dbContext.Cards;
 

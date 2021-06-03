@@ -3,8 +3,8 @@ import colors from 'vuetify/es5/util/colors'
 export default {
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    titleTemplate: '%s - Frontend.Nuxt',
-    title: 'Frontend.Nuxt',
+    titleTemplate: '%s - ProjectManager.Frontend.Nuxt',
+    title: 'ProjectManager.Frontend.Nuxt',
     htmlAttrs: {
       lang: 'en'
     },
@@ -33,18 +33,14 @@ export default {
   buildModules: [
     // https://go.nuxtjs.dev/vuetify
     '@nuxtjs/vuetify',
+    '@nuxtjs/dotenv',
   ],
 
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
-    // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
+    '@nuxtjs/auth-next',
   ],
-
-  // Axios module configuration: https://go.nuxtjs.dev/config-axios
-  axios: {
-    baseUrl: "http://localhost:5000"
-  },
 
   // Vuetify module configuration: https://go.nuxtjs.dev/config-vuetify
   vuetify: {
@@ -65,7 +61,33 @@ export default {
     }
   },
 
+  // Configure Axios
+  axios: {
+    baseURL: 'https://localhost:5001'
+  },
+
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
-  }
+  },
+
+  // Tell Nuxt router to use the Auth module as middleware
+  router: {
+    middleware: ['auth'],
+  },
+
+  // Configure auth middleware to read the secret Auth0 values from the .env file
+  auth: {
+    strategies: {
+      auth0: {
+        domain: 'dev-iqj5y9cp.eu.auth0.com',
+        clientId: 'wrCk2s4BG6fILEoNBcHKViXXMHAyxuL4',
+        audience: 'projectmanager-api',
+        scope: ['openid', 'profile', 'email', 'offline_access'],
+        responseType: 'code',
+        grantType: 'authorization_code',
+        codeChallengeMethod: 'S256',
+      }
+    }
+  },
+
 }
