@@ -21,7 +21,7 @@ namespace ProjectManager.Api.Controllers {
     }
 
     // /api/cards
-    [Authorize]
+    //[Authorize]
     [HttpGet]
     public IEnumerable<Card> All() {
       Debug.WriteLine($"UserId: {this.User.FindFirst(ClaimTypes.NameIdentifier).Value}");
@@ -32,6 +32,7 @@ namespace ProjectManager.Api.Controllers {
     public string TestAuth() => "test";
 
     // /api/cards/{id}
+    [Authorize]
     [HttpGet("{id}")]
     public ActionResult<IEnumerable<Card>> Get(string id) {
       if (id != this.User.FindFirst(ClaimTypes.NameIdentifier).Value) {

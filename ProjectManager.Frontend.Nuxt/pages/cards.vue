@@ -1,31 +1,32 @@
 <template>
   <v-row>
     <v-col class="text-center">
-      <img src="/v.png" alt="Vuetify.js" class="mb-5" />
-      <blockquote class="blockquote">
-        &#8220;First, solve the problem. Then, write the code.&#8221;
-        <footer>
-          <small>
-            <em>&mdash;John Johnson</em>
-          </small>
-        </footer>
-      </blockquote>
-      <button @click="onClick">Log user</button>
-      <button @click="getCards">Get Cards</button>
-      <button @click="$auth.logout()">Logout</button>
+      <div v-if="cards">
+        <p v-for="c in cards">
+          {{ c.name }}
+        </p>
+      </div>
+
+      <v-btn @click="getCards">Get Cards</v-btn>
     </v-col>
   </v-row>
 </template>
 <script>
-  import {mapState, mapActions, mapMutations} from 'vuex'
+import { mapState, mapActions, mapMutations } from "vuex";
+import https from 'https'
 
 export default {
-
-  computed: mapState({
-
-  }),
+  computed: mapState({}),
 
   async fetch() {
+    this.cards = [{ name: "Dummy Card" }];
+    await this.getCards2();
+  },
+
+  data() {
+    return {
+      cards: [],
+    };
   },
 
   methods: {
@@ -33,11 +34,37 @@ export default {
       console.log("user:", this.$auth.user);
     },
     getCards() {
-      var requestPath = "/api/cards/" + this.$auth.user.sub
-      // console.log(this.$axios.get("/api/cards"))
-      console.log(this.$axios.get(requestPath))
+      console.log("Getting Cards");
+      var requestPath = "/api/cards/" + this.$auth.user.sub;
+      this.$axios.get(requestPath).then((resp) => {
+        console.log("Receiving cards");
+        this.cards = resp.data;
+        console.log("cards", this.cards);
+      });
+    },
+    getCards1() {
+      console.log("Getting Cards");
+      var requestPath = "/api/cards/" + this.$auth.user.sub;
+      const agent = new https.Agent({
+        rejectUnauthorized: false,
+      });
+      this.$axios.get(requestPath, {httpsAgent: agent}).then((resp) => {
+        console.log("Receiving cards");
+        this.cards = resp.data;
+        console.log("cards", this.cards);
+      });
+    },
+    async getCards2() {
+      console.log("Getting Cards");
+      var requestPath = "/api/cards/" + this.$auth.user.sub;
+      const agent = new https.Agent({
+        rejectUnauthorized: false,
+      });
+      var resp = await this.$axios.get(requestPath, {httpsAgent: agent})
+      console.log("resp", resp)
+      console.log("resp.data", resp.data)
+      this.cards = resp.data
     },
   },
-
 };
 </script>
