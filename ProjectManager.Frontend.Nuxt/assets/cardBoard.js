@@ -1,10 +1,16 @@
 console.log("Hello from Card Board")
 
+const event = new Event('testEvent');
+
+export var canvas = {}
+
+// elem.dispatchEvent('testEvent');
+
 export function resizeCanvas() {
   if (typeof window !== 'undefined') {
     // We are in the browser
     console.log("document", document);
-    var canvas = document.querySelector('canvas');
+    canvas = document.querySelector('canvas');
     console.log("canvas", canvas);
 
     console.log("canvas width", canvas.width);
@@ -16,6 +22,38 @@ export function resizeCanvas() {
 
     drawGrid();
 
+    canvas.addEventListener("drop", drop)
+    canvas.addEventListener("dragenter", dragEnter)
+    canvas.addEventListener("dragover", dragOver);
+    canvas.addEventListener("dragleave", dragLeave);
+
+    const draggableElements = document.querySelectorAll(".draggable")
+    draggableElements.forEach(elem => {
+      elem.addEventListener("dragstart", dragStart);
+    });
+
+  }
+
+  function dragStart(event) {
+    console.log("drag start")
+  }
+
+  function dragEnter(event) {
+    event.preventDefault();
+    console.log("drag enter")
+  }
+
+  function dragOver(event) {
+    event.preventDefault();
+  }
+
+  function dragLeave(event) {
+    event.preventDefault();
+  }
+
+  function drop(event) {
+    // event.preventDefault();
+    console.log("Drop")
   }
 
   function drawGrid() {
