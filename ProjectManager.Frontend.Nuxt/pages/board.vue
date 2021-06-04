@@ -1,5 +1,66 @@
 <template>
   <div id="canvas-wrap" dropzone="true">
+    <div id="text-editor" class="card">
+      <div class="toolbar">
+        <ul class="tool-list">
+          <li class="tool">
+            <button type="button" data-command="justifyLeft" class="tool--btn">
+              <i class="fas fa-align-left"></i>
+            </button>
+          </li>
+          <li class="tool">
+            <button
+              type="button"
+              data-command="justifyCenter"
+              class="tool--btn"
+            >
+              <i class="fas fa-align-center"></i>
+            </button>
+          </li>
+          <li class="tool">
+            <button type="button" data-command="bold" class="tool--btn">
+              <i class="fas fa-bold"></i>
+            </button>
+          </li>
+          <li class="tool">
+            <button type="button" data-command="italic" class="tool--btn">
+              <i class="fas fa-italic"></i>
+            </button>
+          </li>
+          <li class="tool">
+            <button type="button" data-command="underline" class="tool--btn">
+              <i class="fas fa-underline"></i>
+            </button>
+          </li>
+          <li class="tool">
+            <button
+              type="button"
+              data-command="insertOrderedList"
+              class="tool--btn"
+            >
+              <i class="fas fa-list-ol"></i>
+            </button>
+          </li>
+          <li class="tool">
+            <button
+              type="button"
+              data-command="insertUnorderedList"
+              class="tool--btn"
+            >
+              <i class="fas fa-list-ul"></i>
+            </button>
+          </li>
+          <li class="tool">
+            <button type="button" data-command="createlink" class="tool--btn">
+              <i class="fas fa-link"></i>
+            </button>
+          </li>
+        </ul>
+      </div>
+
+      <div id="output" contenteditable="true"></div>
+    </div>
+
     <canvas dropzone="true" ref="jedi"> </canvas>
 
     <div id="card-templates">
@@ -30,6 +91,7 @@
 <script>
 import https from "https";
 import * as cardBoard from "../assets/cardBoard.js";
+import * as textEditor from "../assets/textEditor.js";
 
 export default {
   data() {
@@ -50,7 +112,9 @@ export default {
     console.log("mounted start");
     cardBoard.resizeCanvas();
 
-    var cont = document.getElementById('canvas-wrap');
+    textEditor.init();
+
+    var cont = document.getElementById("canvas-wrap");
 
     cont.addEventListener("drop", this.drop);
 
@@ -82,8 +146,8 @@ export default {
     },
     async drop(event) {
       event.preventDefault();
-      var cont = document.getElementById('canvas-wrap');
-      console.log("event", event)
+      var cont = document.getElementById("canvas-wrap");
+      console.log("event", event);
       await this.createCard(event.layerX, event.layerY);
     },
     placeCards() {
@@ -93,14 +157,14 @@ export default {
     },
     placeCard(card) {
       var cardElement = document.createElement("div");
-      cardElement.innerHTML = "<p>Test Card</p>";
+      cardElement.innerHTML = `<p>${card.name}</p>`;
       cardElement.style.position = "absolute";
       var topS = card.positionY + "px";
       var leftS = card.positionX + "px";
       cardElement.style.top = topS;
       cardElement.style.left = leftS;
       cardElement.style.color = "white";
-      cardElement.classList.add("card")
+      cardElement.classList.add("card");
       var cont = document.getElementById("canvas-wrap");
       cont.appendChild(cardElement);
       console.log("card placed");
