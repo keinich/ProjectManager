@@ -2,55 +2,114 @@
   <div id="canvas-wrap" dropzone="true">
     <canvas dropzone="true" ref="jedi"> </canvas>
 
-
-    
-    <div id="overlay" class="main-board">
-      <p draggable="true">Test</p>
+    <div id="card-templates">
       <section class="draggable-elements">
         <i
-          class="fas fa-cat draggable"
+          class="fas fa-book draggable"
           draggable="true"
-          style="color: blueviolet"
+          style="color: grey"
           id="cat"
         ></i>
-      </section>
-      <section class="droppable-elements">
-        <div class="droppable" data-draggable-id="cat">
-          <span>Cat</span>
-        </div>
+        <i
+          class="fas fa-clipboard draggable"
+          draggable="true"
+          style="color: grey"
+          id="dog"
+        ></i>
+        <i
+          class="fas fa-chart-bar draggable"
+          draggable="true"
+          style="color: grey"
+          id="bear"
+        ></i>
       </section>
     </div>
   </div>
 </template>
 
 <script>
+import https from "https";
 import * as cardBoard from "../assets/cardBoard.js";
 
-
-
 export default {
-  async fetch() {},
+  data() {
+    return {
+      cards: [],
+      cardName: "New Card",
+    };
+  },
+
+  async fetch() {
+    await this.getCards();
+    console.log(this.cards);
+
+    this.placeCards();
+  },
 
   mounted() {
     console.log("mounted start");
-    cardBoard.resizeCanvas();    
+    cardBoard.resizeCanvas();
 
-    cardBoard.canvas.addEventListener("drop", this.drop)
+    var cont = document.getElementById('canvas-wrap');
+
+    cont.addEventListener("drop", this.drop);
+
+    this.placeCards();
   },
 
   methods: {
-    createCard() {
+    async createCard(posX, posY) {
       console.log("create card");
+
+      var requestPath = "/api/cards/";
+      var resp = await this.$axios.post(requestPath, {
+        name: "New Card",
+        userId: this.$auth.user.sub,
+        positionX: posX,
+        positionY: posY,
+      });
+      console.log("resp from savecard", resp);
+      this.placeCard(resp.data);
     },
-    drop(event) {
+    async getCards() {
+      console.log("Getting Cards");
+      var requestPath = "/api/cards/" + this.$auth.user.sub;
+      const agent = new https.Agent({
+        rejectUnauthorized: false,
+      });
+      var resp = await this.$axios.get(requestPath, { httpsAgent: agent });
+      this.cards = resp.data;
+    },
+    async drop(event) {
       event.preventDefault();
-      this.createCard();
-    }
-  }
+      var cont = document.getElementById('canvas-wrap');
+      console.log("event", event)
+      await this.createCard(event.layerX, event.layerY);
+    },
+    placeCards() {
+      this.cards.forEach((card) => {
+        this.placeCard(card);
+      });
+    },
+    placeCard(card) {
+      var cardElement = document.createElement("div");
+      cardElement.innerHTML = "<p>Test Card</p>";
+      cardElement.style.position = "absolute";
+      var topS = card.positionY + "px";
+      var leftS = card.positionX + "px";
+      cardElement.style.top = topS;
+      cardElement.style.left = leftS;
+      cardElement.style.color = "white";
+      cardElement.classList.add("card")
+      var cont = document.getElementById("canvas-wrap");
+      cont.appendChild(cardElement);
+      console.log("card placed");
+    },
+  },
 };
 </script>
 
 <style>
-@import "https://use.fontawesome.com/releases/v5.9.0/css/all.css";    
+@import "https://use.fontawesome.com/releases/v5.9.0/css/all.css";
 @import "../assets/style.css";
 </style>
