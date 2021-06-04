@@ -77,6 +77,11 @@ export default {
           icon: 'mdi-chart-bubble',
           title: 'Cards',
           to: '/cards'
+        },
+        {
+          icon: 'mdi-chart-bubble',
+          title: 'Board',
+          to: '/board'
         }
       ],
       miniVariant: false,

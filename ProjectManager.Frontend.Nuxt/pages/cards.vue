@@ -10,11 +10,16 @@
       <div>
         <v-text-field label="Card Name" v-model="cardName"></v-text-field>
         <v-btn @click="saveCard">Save Card</v-btn>
+
+        <canvas> </canvas>
       </div>
     </v-col>
   </v-row>
 </template>
+
 <script>
+import * as cardBoard from "../assets/cardBoard.js";
+
 import { mapState, mapActions, mapMutations } from "vuex";
 import https from "https";
 
@@ -29,7 +34,7 @@ export default {
   data() {
     return {
       cards: [],
-      cardName: "New Card"
+      cardName: "New Card",
     };
   },
 
@@ -48,10 +53,17 @@ export default {
     },
     async saveCard() {
       var requestPath = "/api/cards/";
-      var resp = await this.$axios.post(requestPath, {name: this.cardName, userId: this.$auth.user.sub})
-      console.log("resp from savecard", resp)
-      await this.getCards()
-    }
+      var resp = await this.$axios.post(requestPath, {
+        name: this.cardName,
+        userId: this.$auth.user.sub,
+      });
+      console.log("resp from savecard", resp);
+      await this.getCards();
+    },
   },
 };
 </script>
+
+<style>
+@import "../assets/style.css";
+</style>
