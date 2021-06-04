@@ -20,38 +20,39 @@ namespace ProjectManager.Api.Controllers {
       this.dbContext = dbContext;
     }
 
-    // /api/cards
-    //[Authorize]
+    //GET /api/cards
+    [Authorize]
     [HttpGet]
     public IEnumerable<Card> All() {
       Debug.WriteLine($"UserId: {this.User.FindFirst(ClaimTypes.NameIdentifier).Value}");
       return dbContext.Cards;
     }
 
-    [HttpGet("test")]
-    public string TestAuth() => "test";
-
-    // /api/cards/{id}
+    //GET /api/cards/{id}
     [Authorize]
-    [HttpGet("{id}")]
-    public ActionResult<IEnumerable<Card>> Get(string id) {
-      if (id != this.User.FindFirst(ClaimTypes.NameIdentifier).Value) {
+    [HttpGet("{userId}")]
+    public ActionResult<IEnumerable<Card>> Get(string userId) {
+      if (userId != this.User.FindFirst(ClaimTypes.NameIdentifier).Value) {
         return Unauthorized();
       }
-      IEnumerable<Card> result = dbContext.Cards.Where(x => true);
+      IEnumerable<Card> result = dbContext.Cards.Where(x => x.UserId == userId);
       return Ok(result);
     }
 
-    // /api/cards
+    //POST /api/cards
+    [Authorize]
     [HttpPost]
-    public async Task<Card> Create([FromBody] Card card) {
+    public async Task<ActionResult<Card>> Create([FromBody] Card card) {
+      if (card.UserId != this.User.FindFirst(ClaimTypes.NameIdentifier).Value) {
+        return Unauthorized();
+      }
       dbContext.Cards.Add(card);
       await dbContext.SaveChangesAsync();
       Console.WriteLine("Card created");
-      return card;
+      return Ok(card);
     }
 
-    // /api/cards
+    //PUT /api/cards
     [HttpPut]
     public async Task<Card> Update([FromBody] Card card) {
       if (card.Id == 0) {
