@@ -27,16 +27,6 @@ export function resizeCanvas() {
     canvas.addEventListener("dragover", dragOver);
     canvas.addEventListener("dragleave", dragLeave);
 
-    const draggableElements = document.querySelectorAll(".draggable")
-    draggableElements.forEach(elem => {
-      elem.addEventListener("dragstart", dragStart);
-    });
-
-  }
-
-  function dragStart(event) {
-    event.dataTransfer.setData("cardType", event.target.id);
-    console.log("drag start")
   }
 
   function dragEnter(event) {

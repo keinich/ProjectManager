@@ -53,7 +53,7 @@
       </ul>
     </div>
 
-    <div id="output" class="card" style="visibility: hidden">
+    <div id="output" class="card" style="visibility: hidden" draggable="true">
       <div class="texteditor" contenteditable="true"></div>
     </div>
 
@@ -112,12 +112,13 @@ export default {
     var cont = document.getElementById("canvas-wrap");
 
     cont.addEventListener("drop", this.drop);
+    cont.addEventListener("dragover", this.dragover);
 
     var noteTemplate = document.getElementById("note");
 
     console.log("noteTemplate", noteTemplate);
 
-    noteTemplate.addEventListener("dragStart", this.dragStart);
+    noteTemplate.addEventListener("dragstart", this.dragStartTemplate);
 
     this.placeCards();
     textEditor.init();
@@ -149,17 +150,63 @@ export default {
       this.placeCard(resp.data);
     },
     async updateCard(card) {
+      console.log("update card", card);
       var requestPath = "/api/cards/";
       var resp = await this.$axios.put(requestPath, card);
       console.log("resp from updateCard", resp);
     },
 
     async drop(event) {
+
+      var dragType = event.dataTransfer.getData("dragType")
+      switch (dragType) {
+        case "template":
+          break;
+          case "card":
+            
+          var cardId = event.dataTransfer.getData("cardId");
+          console.log("cardId", cardId);
+          console.log("cards", this.cards);
+          var card;
+          var card = this.cards.forEach(c => {
+            if (c.id == cardId) {
+              c.positionX = event.layerX;
+              c.positionY = event.layerY;
+              this.updateCard(c);
+            }
+          });
+            break
+      }
+
       event.preventDefault();
       const cardType = event.dataTransfer.getData("cardType");
       if (cardType === "note") {
         await this.createNote(event.layerX, event.layerY);
       }
+    },
+
+    dragover(event) {
+      var dragType = event.dataTransfer.getData("dragType");
+      switch (dragType) {
+        case "template":
+          break;
+        case "card":
+          var cardElementId = event.dataTransfer.getData("cardElementId");
+          var cardElement = document.getElementById(cardElementId);
+          this.setPosition(cardElement, event.layerX, event.layerY);
+          break;
+      }
+    },
+    dragStartTemplate(event) {
+      event.dataTransfer.setData("cardType", event.target.id);
+      event.dataTransfer.setData("dragType", "template");
+      console.log("start dragging template");
+    },
+    dragStartCard(event, cardId) {
+      event.dataTransfer.setData("cardElementId", event.target.id);
+      event.dataTransfer.setData("cardId", cardId);
+      event.dataTransfer.setData("dragType", "card");
+      console.log("start dragging template");
     },
 
     placeCards() {
@@ -183,41 +230,32 @@ export default {
       // Set Content
       var texteditorElement1 =
         cardElement.getElementsByClassName("texteditor")[0];
-      this.setContent(texteditorElement1, card.content);
+      texteditorElement1.innerHTML = card.content;
 
       console.log("TextEditor", texteditorElement1);
       var cont = document.getElementById("canvas-wrap");
 
       cont.appendChild(cardElement);
+
       cardElement.addEventListener("focusout", (event) => {
         var newOutput = document.getElementById("output-" + card.id);
         var texteditorElement2 =
           newOutput.getElementsByClassName("texteditor")[0];
-        card.content = this.convertToString(texteditorElement2);
+        card.content = texteditorElement2.innerHTML;
         console.log("new card content", card.content);
         this.updateCard(card);
+      });
+      cardElement.addEventListener("dragstart", (event) => {
+        this.dragStartCard(event, card.id);
       });
       console.log("card placed");
     },
 
-    setContent(domElement, content) {
-      domElement.innerHTML = content;
-      return;
-      var p = document.createElement("p");
-      p.innerHTML = content;
-      p.style.color = "red";
-      domElement.appendChild(p);
-    },
-    convertToString(domElement) {
-      return domElement.innerHTML;
-      console.log("domElement", domElement);
-      var result = "";
-      domElement.children.forEach((c) => {
-        console.log("child", c);
-        console.log("child innerHTML", c.innerHTML);
-        result += c.innerHTML;
-      });
-      return result;
+    setPosition(domElement, x, y) {
+      var leftS = x + "px";
+      var topS = y + "px";
+      domElement.style.left = leftS;
+      domElement.style.top = topS;
     },
   },
 };

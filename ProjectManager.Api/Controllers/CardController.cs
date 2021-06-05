@@ -65,8 +65,10 @@ namespace ProjectManager.Api.Controllers {
       Card cardToUpdate = dbContext.Cards.First((x) => x.Id == card.Id);
       cardToUpdate.Name = card.Name;
       cardToUpdate.Content = card.Content;
+      cardToUpdate.PositionX = card.PositionX;
+      cardToUpdate.PositionY = card.PositionY;
       await dbContext.SaveChangesAsync();
-      return Ok(card);
+      return Ok(cardToUpdate);
     }
 
     // /api/cards/{id}
