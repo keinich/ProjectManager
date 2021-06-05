@@ -25,8 +25,7 @@ namespace ProjectManager.Api.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
+                    b.Property<string>("Content")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
@@ -38,24 +37,15 @@ namespace ProjectManager.Api.Migrations
                     b.Property<int>("PositionY")
                         .HasColumnType("int");
 
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.ToTable("Cards");
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("Card");
-                });
-
-            modelBuilder.Entity("ProjectManager.Api.Models.Note", b =>
-                {
-                    b.HasBaseType("ProjectManager.Api.Models.Card");
-
-                    b.Property<string>("Content")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasDiscriminator().HasValue("Note");
                 });
 #pragma warning restore 612, 618
         }

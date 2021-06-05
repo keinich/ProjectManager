@@ -53,14 +53,20 @@ namespace ProjectManager.Api.Controllers {
     }
 
     //PUT /api/cards
+    [Authorize]
     [HttpPut]
-    public async Task<Card> Update([FromBody] Card card) {
-      if (card.Id == 0) {
-        return null;
+    public async Task<ActionResult<Card>> Update([FromBody] Card card) {
+      if (card.UserId != this.User.FindFirst(ClaimTypes.NameIdentifier).Value) {
+        return Unauthorized();
       }
-      dbContext.Add(card);
+      if (card.Id == 0) {
+        return BadRequest("CardId must not be 0");
+      }
+      Card cardToUpdate = dbContext.Cards.First((x) => x.Id == card.Id);
+      cardToUpdate.Name = card.Name;
+      cardToUpdate.Content = card.Content;
       await dbContext.SaveChangesAsync();
-      return card;
+      return Ok(card);
     }
 
     // /api/cards/{id}

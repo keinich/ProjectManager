@@ -12,8 +12,8 @@ namespace ProjectManager.Api.Migrations {
             UserId = table.Column<string>(type: "nvarchar(max)", nullable: true),
             PositionX = table.Column<int>(type: "int", nullable: false),
             PositionY = table.Column<int>(type: "int", nullable: false),
-            Discriminator = table.Column<string>(type: "nvarchar(max)", nullable: false),
-            Content = table.Column<string>(type: "nvarchar(max)", nullable: true)
+            Content = table.Column<string>(type: "nvarchar(max)", nullable: true),
+            Type = table.Column<int>(type: "int", nullable: false)
           },
           constraints: table => {
             table.PrimaryKey("PK_Cards", x => x.Id);

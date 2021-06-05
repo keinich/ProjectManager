@@ -10,6 +10,7 @@ export function init() {
         document.execCommand(cmd, false, url);
       } else {
         document.execCommand(cmd, false, null);
+        console.log("executing command", cmd);
       }
     })
   }

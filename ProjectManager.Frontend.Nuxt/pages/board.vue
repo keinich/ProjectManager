@@ -1,6 +1,6 @@
 <template>
   <div id="canvas-wrap" dropzone="true">
-    <div class="toolbar card">
+    <div class="toolbar card" style="height: 5rem">
       <ul class="tool-list">
         <li class="tool">
           <button type="button" data-command="justifyLeft" class="tool--btn">
@@ -60,29 +60,27 @@
     <canvas dropzone="true" ref="jedi"> </canvas>
 
     <div id="card-templates">
-      <section class="draggable-elements">
-        <i
-          class="fas fa-sticky-note draggable tooltip"
-          draggable="true"
-          style="color: grey"
-          id="note"
-          ><span class="tooltiptext">Note</span></i
-        >
-        <i
-          class="fas fa-columns draggable tooltip"
-          draggable="true"
-          style="color: grey"
-          id="column"
-          ><span class="tooltiptext">Column</span></i
-        >
-        <i
-          class="fas fa-clipboard draggable tooltip"
-          draggable="true"
-          style="color: grey"
-          id="board"
-          ><span class="tooltiptext">Board</span></i
-        >
-      </section>
+      <i
+        class="fas fa-sticky-note fa-xs draggable tooltip"
+        draggable="true"
+        style="color: grey"
+        id="note"
+        ><span class="tooltiptext">Note</span></i
+      >
+      <i
+        class="fas fa-columns fa-xs draggable tooltip"
+        draggable="true"
+        style="color: grey"
+        id="column"
+        ><span class="tooltiptext">Column</span></i
+      >
+      <i
+        class="fas fa-clipboard fa-xs draggable tooltip"
+        draggable="true"
+        style="color: grey"
+        id="board"
+        ><span class="tooltiptext">Board</span></i
+      >
     </div>
   </div>
 </template>
@@ -111,8 +109,6 @@ export default {
     console.log("mounted start");
     cardBoard.resizeCanvas();
 
-    textEditor.init();
-
     var cont = document.getElementById("canvas-wrap");
 
     cont.addEventListener("drop", this.drop);
@@ -124,22 +120,10 @@ export default {
     noteTemplate.addEventListener("dragStart", this.dragStart);
 
     this.placeCards();
+    textEditor.init();
   },
 
   methods: {
-    async createNote(posX, posY) {
-      console.log("create note");
-
-      var requestPath = "/api/cards/";
-      var resp = await this.$axios.post(requestPath, {
-        name: "New Card",
-        userId: this.$auth.user.sub,
-        positionX: posX,
-        positionY: posY,
-      });
-      console.log("resp from savecard", resp);
-      this.placeCard(resp.data);
-    },
     async getCards() {
       console.log("Getting Cards");
       var requestPath = "/api/cards/" + this.$auth.user.sub;
@@ -149,6 +133,27 @@ export default {
       var resp = await this.$axios.get(requestPath, { httpsAgent: agent });
       this.cards = resp.data;
     },
+    async createNote(posX, posY) {
+      console.log("create note");
+
+      var requestPath = "/api/cards/";
+      var resp = await this.$axios.post(requestPath, {
+        name: "New Card",
+        userId: this.$auth.user.sub,
+        positionX: posX,
+        positionY: posY,
+        type: 0,
+        content: "",
+      });
+      console.log("resp from savecard", resp);
+      this.placeCard(resp.data);
+    },
+    async updateCard(card) {
+      var requestPath = "/api/cards/";
+      var resp = await this.$axios.put(requestPath, card);
+      console.log("resp from updateCard", resp);
+    },
+
     async drop(event) {
       event.preventDefault();
       const cardType = event.dataTransfer.getData("cardType");
@@ -156,6 +161,7 @@ export default {
         await this.createNote(event.layerX, event.layerY);
       }
     },
+
     placeCards() {
       this.cards.forEach((card) => {
         this.placeCard(card);
@@ -165,15 +171,53 @@ export default {
       var texteditorElement = document.getElementById("output");
       var cardElement = texteditorElement.cloneNode(true);
       cardElement.removeAttribute("id");
+      cardElement.setAttribute("id", "output-" + card.id);
+
+      // Set Position
       var topS = card.positionY + "px";
       var leftS = card.positionX + "px";
       cardElement.style.top = topS;
       cardElement.style.left = leftS;
       cardElement.style.visibility = "visible";
+
+      // Set Content
+      var texteditorElement1 =
+        cardElement.getElementsByClassName("texteditor")[0];
+      this.setContent(texteditorElement1, card.content);
+
+      console.log("TextEditor", texteditorElement1);
       var cont = document.getElementById("canvas-wrap");
+
       cont.appendChild(cardElement);
-      textEditor.init();
+      cardElement.addEventListener("focusout", (event) => {
+        var newOutput = document.getElementById("output-" + card.id);
+        var texteditorElement2 =
+          newOutput.getElementsByClassName("texteditor")[0];
+        card.content = this.convertToString(texteditorElement2);
+        console.log("new card content", card.content);
+        this.updateCard(card);
+      });
       console.log("card placed");
+    },
+
+    setContent(domElement, content) {
+      domElement.innerHTML = content;
+      return;
+      var p = document.createElement("p");
+      p.innerHTML = content;
+      p.style.color = "red";
+      domElement.appendChild(p);
+    },
+    convertToString(domElement) {
+      return domElement.innerHTML;
+      console.log("domElement", domElement);
+      var result = "";
+      domElement.children.forEach((c) => {
+        console.log("child", c);
+        console.log("child innerHTML", c.innerHTML);
+        result += c.innerHTML;
+      });
+      return result;
     },
   },
 };
