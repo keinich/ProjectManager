@@ -35,6 +35,7 @@ export function resizeCanvas() {
   }
 
   function dragStart(event) {
+    event.dataTransfer.setData("cardType", event.target.id);
     console.log("drag start")
   }
 
@@ -73,6 +74,7 @@ export function resizeCanvas() {
       }
     }
   }
+  
 }
 
 

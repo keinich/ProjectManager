@@ -19,6 +19,8 @@ canvas {
   padding: 0px;
 }
 
+/* Cards */
+
 #card-templates {
   position: absolute;
   top: 250px;
@@ -50,14 +52,21 @@ canvas {
   font-size: 1rem;  
   font-weight: bold;
   background-color: rgb(78, 65, 65);
-  border: 3px solid #111;
+  border: 3px none #111;
   border-radius: 1rem;
-  box-shadow: 5px 5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
   transition: border-width 0.2s, transform 0.2s, background-color 0.4s;
 }
 
 .card p {
   color: black;
+}
+
+/* Text Editor */
+
+.toolbar {
+  position: absolute;
+  left: 50%;
 }
 
 .tool-list {
@@ -77,12 +86,15 @@ canvas {
 	font-size: 20px;
 }
 
-#output {
+.texteditor {
 	height: 400px; 
-	box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+  width: 300px;
+	/* box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23); */
 	margin: 1rem;
 	padding: 1rem;
 }
+
+/* Drag Drop */
 
 .draggable-elements {
   display: flex;
@@ -99,7 +111,7 @@ canvas {
   justify-content: center;
   font-size: 4rem;
   margin: 0rem 0rem;
-  cursor: move;
+  cursor: grab;
   transition: opacity 0.2s;
 }
 
@@ -154,4 +166,40 @@ canvas {
 
 .draggable.dragged:hover {
   opacity: 0.1;
+}
+
+/* Tooltips */
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 120px;
+  font-size: 15px;
+  background-color: rgb(44, 39, 39);
+  color: rgb(250, 250, 250);
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+  position: absolute;
+  z-index: 1;
+  bottom: 78%;
+  left: 200%;
+  margin-left: -60px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.tooltip .tooltiptext::after {
+  content: "";
+  position: absolute;
+  top: 35%;
+  left: -4%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: transparent rgb(44, 39, 39)  transparent transparent;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
 }
