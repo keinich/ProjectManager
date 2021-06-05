@@ -22,29 +22,12 @@ export function resizeCanvas() {
 
     drawGrid();
 
-    canvas.addEventListener("drop", drop)
-    canvas.addEventListener("dragenter", dragEnter)
     canvas.addEventListener("dragover", dragOver);
-    canvas.addEventListener("dragleave", dragLeave);
 
   }
-
-  function dragEnter(event) {
-    event.preventDefault();
-    console.log("drag enter")
-  }
-
+  
   function dragOver(event) {
     event.preventDefault();
-  }
-
-  function dragLeave(event) {
-    event.preventDefault();
-  }
-
-  function drop(event) {
-    // event.preventDefault();
-    console.log("Drop")
   }
 
   function drawGrid() {

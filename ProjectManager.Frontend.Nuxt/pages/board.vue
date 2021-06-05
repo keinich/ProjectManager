@@ -53,7 +53,7 @@
       </ul>
     </div>
 
-    <div id="output" class="card" style="visibility: hidden" draggable="true">
+    <div id="card-0" class="card" style="visibility: hidden" draggable="true">
       <div class="texteditor" contenteditable="true"></div>
     </div>
 
@@ -91,6 +91,8 @@ import * as cardBoard from "../assets/cardBoard.js";
 import * as textEditor from "../assets/textEditor.js";
 
 export default {
+
+  // vue hooks
   data() {
     return {
       cards: [],
@@ -125,6 +127,8 @@ export default {
   },
 
   methods: {
+
+    // crud
     async getCards() {
       console.log("Getting Cards");
       var requestPath = "/api/cards/" + this.$auth.user.sub;
@@ -156,32 +160,30 @@ export default {
       console.log("resp from updateCard", resp);
     },
 
+    // drag n drop
     async drop(event) {
-
-      var dragType = event.dataTransfer.getData("dragType")
+      event.preventDefault();
+      var dragType = event.dataTransfer.getData("dragType");
       switch (dragType) {
         case "template":
+          const cardType = event.dataTransfer.getData("cardType");
+          if (cardType === "note") {
+            await this.createNote(event.layerX, event.layerY);
+          }
           break;
-          case "card":
-            
+        case "card":
           var cardId = event.dataTransfer.getData("cardId");
           console.log("cardId", cardId);
           console.log("cards", this.cards);
           var card;
-          var card = this.cards.forEach(c => {
+          var card = this.cards.forEach((c) => {
             if (c.id == cardId) {
               c.positionX = event.layerX;
               c.positionY = event.layerY;
               this.updateCard(c);
             }
           });
-            break
-      }
-
-      event.preventDefault();
-      const cardType = event.dataTransfer.getData("cardType");
-      if (cardType === "note") {
-        await this.createNote(event.layerX, event.layerY);
+          break;
       }
     },
 
@@ -209,46 +211,41 @@ export default {
       console.log("start dragging template");
     },
 
+    // cardboard utils
     placeCards() {
       this.cards.forEach((card) => {
         this.placeCard(card);
       });
     },
     placeCard(card) {
-      var texteditorElement = document.getElementById("output");
-      var cardElement = texteditorElement.cloneNode(true);
+      var cardTemplateElement = document.getElementById("card-0");
+      var cardElement = cardTemplateElement.cloneNode(true);
       cardElement.removeAttribute("id");
-      cardElement.setAttribute("id", "output-" + card.id);
-
-      // Set Position
-      var topS = card.positionY + "px";
-      var leftS = card.positionX + "px";
-      cardElement.style.top = topS;
-      cardElement.style.left = leftS;
+      var cardElementId = "card-" + card.id;
+      cardElement.setAttribute("id", cardElementId);
+      
+      this.setPosition(cardElement, card.positionX, card.positionY);
       cardElement.style.visibility = "visible";
 
       // Set Content
-      var texteditorElement1 =
-        cardElement.getElementsByClassName("texteditor")[0];
-      texteditorElement1.innerHTML = card.content;
+      var texteditorElement = cardElement.getElementsByClassName("texteditor")[0];
+      texteditorElement.innerHTML = card.content;
 
-      console.log("TextEditor", texteditorElement1);
+      // insert the card
       var cont = document.getElementById("canvas-wrap");
-
       cont.appendChild(cardElement);
 
+      // set card event listeners
       cardElement.addEventListener("focusout", (event) => {
-        var newOutput = document.getElementById("output-" + card.id);
-        var texteditorElement2 =
-          newOutput.getElementsByClassName("texteditor")[0];
-        card.content = texteditorElement2.innerHTML;
-        console.log("new card content", card.content);
+        var newCardElement = document.getElementById(cardElementId);
+        var newTexteditorElement =
+          newCardElement.getElementsByClassName("texteditor")[0];
+        card.content = newTexteditorElement.innerHTML;
         this.updateCard(card);
       });
       cardElement.addEventListener("dragstart", (event) => {
         this.dragStartCard(event, card.id);
       });
-      console.log("card placed");
     },
 
     setPosition(domElement, x, y) {
