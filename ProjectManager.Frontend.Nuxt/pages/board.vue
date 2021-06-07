@@ -53,11 +53,17 @@
       </ul>
     </div>
 
-    <div id="card-0" class="card" style="visibility: hidden" draggable="true">
-      <div class="texteditor" contenteditable="true"></div>
+    <div
+      id="card-0"
+      class="card"
+      style="visibility: hidden"
+      draggable="true"
+      dropzone="false"
+    >
+      <div class="texteditor" contenteditable="false" dropzone="false"></div>
     </div>
 
-    <canvas dropzone="true" ref="jedi"> </canvas>
+    <canvas dropzone="true" id="maincanvas"> </canvas>
 
     <div id="card-templates">
       <i
@@ -91,12 +97,20 @@ import * as cardBoard from "../assets/cardBoard.js";
 import * as textEditor from "../assets/textEditor.js";
 
 export default {
-
   // vue hooks
   data() {
     return {
       cards: [],
-      cardName: "New Card",
+      selectedCardIds: [],
+      currentDragInfo: {
+        dragType: "",
+        cardId: "",
+        templateId: "",
+        startClientX: 0,
+        startClientY: 0,
+        startCardX: 0,
+        startCardY: 0,
+      },
     };
   },
 
@@ -122,12 +136,14 @@ export default {
 
     noteTemplate.addEventListener("dragstart", this.dragStartTemplate);
 
+    var canvasElement = document.getElementById("maincanvas");
+    canvasElement.addEventListener("click", this.deselectCards);
+
     this.placeCards();
     textEditor.init();
   },
 
   methods: {
-
     // crud
     async getCards() {
       console.log("Getting Cards");
@@ -154,16 +170,15 @@ export default {
       this.placeCard(resp.data);
     },
     async updateCard(card) {
-      console.log("update card", card);
       var requestPath = "/api/cards/";
       var resp = await this.$axios.put(requestPath, card);
-      console.log("resp from updateCard", resp);
     },
 
     // drag n drop
     async drop(event) {
       event.preventDefault();
       var dragType = event.dataTransfer.getData("dragType");
+      console.log("dragtype at drop", dragType);
       switch (dragType) {
         case "template":
           const cardType = event.dataTransfer.getData("cardType");
@@ -178,8 +193,12 @@ export default {
           var card;
           var card = this.cards.forEach((c) => {
             if (c.id == cardId) {
-              c.positionX = event.layerX;
-              c.positionY = event.layerY;
+              var deltaX = event.clientX - this.currentDragInfo.startClientX;
+              var deltaY = event.clientY - this.currentDragInfo.startClientY;
+              var newX = this.currentDragInfo.startCardX + deltaX;
+              var newY = this.currentDragInfo.startCardY + deltaY;
+              c.positionX = newX;
+              c.positionY = newY;
               this.updateCard(c);
             }
           });
@@ -188,27 +207,59 @@ export default {
     },
 
     dragover(event) {
-      var dragType = event.dataTransfer.getData("dragType");
+      // console.log("drag ev", event);
+      event.preventDefault();
+      var dragType = this.currentDragInfo.dragType;
       switch (dragType) {
         case "template":
           break;
         case "card":
-          var cardElementId = event.dataTransfer.getData("cardElementId");
+          var cardElementId = this.getCardElementId(
+            this.currentDragInfo.cardId
+          );
           var cardElement = document.getElementById(cardElementId);
-          this.setPosition(cardElement, event.layerX, event.layerY);
+          var deltaX = event.clientX - this.currentDragInfo.startClientX;
+          var deltaY = event.clientY - this.currentDragInfo.startClientY;
+          var newX = this.currentDragInfo.startCardX + deltaX;
+          var newY = this.currentDragInfo.startCardY + deltaY;
+          // console.log("newPos", {x: newX, y: newY});
+          this.setPosition(cardElement, newX, newY);
           break;
       }
     },
     dragStartTemplate(event) {
       event.dataTransfer.setData("cardType", event.target.id);
       event.dataTransfer.setData("dragType", "template");
-      console.log("start dragging template");
+      this.currentDragInfo = {
+        dragType: "template",
+        cardId: "",
+        templateId: "note",
+      };
     },
     dragStartCard(event, cardId) {
+      var img = document.createElement("img");
+      img.src =
+        "data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=";
+      event.dataTransfer.setDragImage(img, 0, 0);
+
       event.dataTransfer.setData("cardElementId", event.target.id);
       event.dataTransfer.setData("cardId", cardId);
       event.dataTransfer.setData("dragType", "card");
-      console.log("start dragging template");
+
+      this.currentDragInfo = {
+        dragType: "card",
+        cardId: cardId,
+        templateId: "",
+        startClientX: event.clientX,
+        startClientY: event.clientY,
+        startCardX: parseInt(event.target.style.left, 10),
+        startCardY: parseInt(event.target.style.top, 10)
+      };
+      console.log("event target", event.target);
+      console.log("drag info", this.currentDragInfo);
+    },
+    drag(event) {
+      event.preventDefault();
     },
 
     // cardboard utils
@@ -221,14 +272,16 @@ export default {
       var cardTemplateElement = document.getElementById("card-0");
       var cardElement = cardTemplateElement.cloneNode(true);
       cardElement.removeAttribute("id");
+      var cardId = card.id;
       var cardElementId = "card-" + card.id;
       cardElement.setAttribute("id", cardElementId);
-      
+
       this.setPosition(cardElement, card.positionX, card.positionY);
       cardElement.style.visibility = "visible";
 
       // Set Content
-      var texteditorElement = cardElement.getElementsByClassName("texteditor")[0];
+      var texteditorElement =
+        cardElement.getElementsByClassName("texteditor")[0];
       texteditorElement.innerHTML = card.content;
 
       // insert the card
@@ -236,23 +289,69 @@ export default {
       cont.appendChild(cardElement);
 
       // set card event listeners
-      cardElement.addEventListener("focusout", (event) => {
-        var newCardElement = document.getElementById(cardElementId);
-        var newTexteditorElement =
-          newCardElement.getElementsByClassName("texteditor")[0];
-        card.content = newTexteditorElement.innerHTML;
-        this.updateCard(card);
+      cardElement.addEventListener("focusout", (event) => {});
+      cardElement.addEventListener("click", (event) => {
+        this.selectCard(cardId);
       });
       cardElement.addEventListener("dragstart", (event) => {
         this.dragStartCard(event, card.id);
       });
+      cardElement.addEventListener("drag", this.drag);
     },
 
+    deselectCards() {
+      this.selectedCardIds.forEach((cardId) => {
+        this.deselectCard(cardId);
+      });
+    },
+    selectCard(cardId) {
+      var cardElementId = this.getCardElementId(cardId);
+      var newCardElement = document.getElementById(cardElementId);
+      var newTexteditorElement =
+        newCardElement.getElementsByClassName("texteditor")[0];
+      newCardElement.classList.add("cardSelected");
+      newTexteditorElement.contentEditable = true;
+      newCardElement.setAttribute("draggable", "false");
+      this.selectedCardIds.push(cardId);
+    },
+    deselectCard(cardId) {
+      var cardElementId = this.getCardElementId(cardId);
+      var newCardElement = document.getElementById(cardElementId);
+      var newTexteditorElement =
+        newCardElement.getElementsByClassName("texteditor")[0];
+      newTexteditorElement.contentEditable = false;
+      var card = this.getCardById(cardId);
+      console.log("card found", card);
+      newCardElement.setAttribute("draggable", "true");
+      card.content = newTexteditorElement.innerHTML;
+      newCardElement.classList.remove("cardSelected");
+      this.updateCard(card);
+      this.removeFromArray(this.selectedCardIds, cardId);
+    },
+
+    getCardById(cardId) {
+      var card = {};
+      this.cards.forEach((c) => {
+        if (cardId == c.id) {
+          card = c;
+        }
+      });
+      return card;
+    },
+    getCardElementId(cardId) {
+      return "card-" + cardId;
+    },
     setPosition(domElement, x, y) {
       var leftS = x + "px";
       var topS = y + "px";
       domElement.style.left = leftS;
       domElement.style.top = topS;
+    },
+    removeFromArray(arr, el) {
+      const index = arr.indexOf(el);
+      if (index > -1) {
+        arr.splice(index, 1);
+      }
     },
   },
 };

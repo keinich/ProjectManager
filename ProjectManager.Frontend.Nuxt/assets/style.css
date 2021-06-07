@@ -58,6 +58,10 @@ canvas {
   transition: border-width 0.2s, transform 0.2s, background-color 0.4s;
 }
 
+.cardSelected {
+  border: 3px solid rgb(146, 222, 224);
+}
+
 .card p {
   color: black;
 }
