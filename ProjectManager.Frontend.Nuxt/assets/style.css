@@ -42,7 +42,7 @@ canvas {
 .card {
   position: absolute;
   height: 20rem;
-  width: 20 rem;
+  width: 20rem;
   margin: 1rem auto;
   display: flex;
   justify-content: center;
@@ -66,6 +66,21 @@ canvas {
   color: black;
 }
 
+.resizer {
+  position: absolute;
+  left: 95%;
+  top: 95%;
+  opacity: 0;
+  transition: opacity 0.5s;
+}
+
+.card:hover .resizer {
+  opacity: 1;
+}
+
+.resizer:hover {
+  cursor: nwse-resize;
+}
 /* Text Editor */
 
 .toolbar {

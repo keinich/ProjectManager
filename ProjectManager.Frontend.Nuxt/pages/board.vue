@@ -61,6 +61,7 @@
       dropzone="false"
     >
       <div class="texteditor" contenteditable="false" dropzone="false"></div>
+      <i class="fas fa-expand resizer" draggable="true"></i>
     </div>
 
     <canvas dropzone="true" id="maincanvas"> </canvas>
@@ -110,6 +111,8 @@ export default {
         startClientY: 0,
         startCardX: 0,
         startCardY: 0,
+        startCardWidth: 0,
+        startCardHeight: 0,
       },
     };
   },
@@ -177,7 +180,7 @@ export default {
     // drag n drop
     async drop(event) {
       event.preventDefault();
-      var dragType = event.dataTransfer.getData("dragType");
+      var dragType = this.currentDragInfo.dragType;
       console.log("dragtype at drop", dragType);
       switch (dragType) {
         case "template":
@@ -222,9 +225,20 @@ export default {
           var deltaY = event.clientY - this.currentDragInfo.startClientY;
           var newX = this.currentDragInfo.startCardX + deltaX;
           var newY = this.currentDragInfo.startCardY + deltaY;
-          // console.log("newPos", {x: newX, y: newY});
           this.setPosition(cardElement, newX, newY);
           break;
+        case "resizeCard":
+          var cardElementId = this.getCardElementId(
+            this.currentDragInfo.cardId
+          );
+          var cardElement = document.getElementById(cardElementId);
+          var deltaX = event.clientX - this.currentDragInfo.startClientX;
+          var deltaY = event.clientY - this.currentDragInfo.startClientY;
+          var newWidth = this.currentDragInfo.startCardWidth + deltaX;
+          var newHeight = this.currentDragInfo.startCardHeight + deltaY;
+          // console.log("newScale", {w: newWidth, h: newHeight});
+          cardElement.style.width = newWidth + "px";
+          cardElement.style.height = newHeight + "px";
       }
     },
     dragStartTemplate(event) {
@@ -246,17 +260,33 @@ export default {
       event.dataTransfer.setData("cardId", cardId);
       event.dataTransfer.setData("dragType", "card");
 
+      var cardElementId = this.getCardElementId(cardId);
+      var cardElement = document.getElementById(cardElementId);
+      var eventTarget = event.target;
+      var startCardX = parseInt(cardElement.style.left, 10);
+      var startCardY = parseInt(cardElement.style.top, 10);
+      var startCardWidth = parseInt(cardElement.style.width, 10);
+      var startCardHeight = parseInt(cardElement.style.height, 10);
+      console.log("starScale", {w: cardElement.style.width, h: startCardHeight});
+      console.log("cardElement", cardElement);
+      var dragType = "";
+      if (eventTarget.classList.contains("resizer")) {
+        dragType = "resizeCard";
+      } else {
+        dragType = "card";
+      }
+
       this.currentDragInfo = {
-        dragType: "card",
+        dragType: dragType,
         cardId: cardId,
         templateId: "",
         startClientX: event.clientX,
         startClientY: event.clientY,
-        startCardX: parseInt(event.target.style.left, 10),
-        startCardY: parseInt(event.target.style.top, 10)
+        startCardX: startCardX,
+        startCardY: startCardY,
+        startCardWidth: startCardWidth,
+        startCardHeight: startCardHeight,
       };
-      console.log("event target", event.target);
-      console.log("drag info", this.currentDragInfo);
     },
     drag(event) {
       event.preventDefault();
@@ -277,6 +307,7 @@ export default {
       cardElement.setAttribute("id", cardElementId);
 
       this.setPosition(cardElement, card.positionX, card.positionY);
+      this.setScale(cardElement, 100, 100);
       cardElement.style.visibility = "visible";
 
       // Set Content
@@ -347,6 +378,13 @@ export default {
       domElement.style.left = leftS;
       domElement.style.top = topS;
     },
+    setScale(domElement, width, height) {
+      var widthS = width + "px";
+      var heightS = height + "px";
+      domElement.style.width = widthS;
+      domElement.style.height = heightS;
+    }
+    ,
     removeFromArray(arr, el) {
       const index = arr.indexOf(el);
       if (index > -1) {
