@@ -67,6 +67,8 @@ namespace ProjectManager.Api.Controllers {
       cardToUpdate.Content = card.Content;
       cardToUpdate.PositionX = card.PositionX;
       cardToUpdate.PositionY = card.PositionY;
+      cardToUpdate.Width = card.Width;
+      cardToUpdate.Height = card.Height;
       await dbContext.SaveChangesAsync();
       return Ok(cardToUpdate);
     }

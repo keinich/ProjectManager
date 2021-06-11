@@ -191,10 +191,7 @@ export default {
           break;
         case "card":
           var cardId = event.dataTransfer.getData("cardId");
-          console.log("cardId", cardId);
-          console.log("cards", this.cards);
-          var card;
-          var card = this.cards.forEach((c) => {
+          this.cards.forEach((c) => {
             if (c.id == cardId) {
               var deltaX = event.clientX - this.currentDragInfo.startClientX;
               var deltaY = event.clientY - this.currentDragInfo.startClientY;
@@ -206,6 +203,19 @@ export default {
             }
           });
           break;
+        case "resizeCard":
+          var cardId = this.currentDragInfo.cardId;
+          this.cards.forEach((c) => {
+            if (c.id == cardId) {
+              var deltaX = event.clientX - this.currentDragInfo.startClientX;
+              var deltaY = event.clientY - this.currentDragInfo.startClientY;
+              var newWidth = this.currentDragInfo.startCardWidth + deltaX;
+              var newHeight = this.currentDragInfo.startCardHeight + deltaY;
+              c.width = newWidth
+              c.height = newHeight;
+              this.updateCard(c);
+            }
+          });
       }
     },
 
@@ -267,7 +277,10 @@ export default {
       var startCardY = parseInt(cardElement.style.top, 10);
       var startCardWidth = parseInt(cardElement.style.width, 10);
       var startCardHeight = parseInt(cardElement.style.height, 10);
-      console.log("starScale", {w: cardElement.style.width, h: startCardHeight});
+      console.log("starScale", {
+        w: cardElement.style.width,
+        h: startCardHeight,
+      });
       console.log("cardElement", cardElement);
       var dragType = "";
       if (eventTarget.classList.contains("resizer")) {
@@ -307,7 +320,7 @@ export default {
       cardElement.setAttribute("id", cardElementId);
 
       this.setPosition(cardElement, card.positionX, card.positionY);
-      this.setScale(cardElement, 100, 100);
+      this.setScale(cardElement, card.width, card.height);
       cardElement.style.visibility = "visible";
 
       // Set Content
@@ -383,8 +396,7 @@ export default {
       var heightS = height + "px";
       domElement.style.width = widthS;
       domElement.style.height = heightS;
-    }
-    ,
+    },
     removeFromArray(arr, el) {
       const index = arr.indexOf(el);
       if (index > -1) {
