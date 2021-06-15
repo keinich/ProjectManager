@@ -2,28 +2,45 @@ console.log("Hello from Card Board")
 
 const event = new Event('testEvent');
 
-export var canvas = {}
+export var canvas = {};
 
-export function resizeCanvas() {
+var selecting = false;
+
+export function init() {
   if (typeof window !== 'undefined') {
     // We are in the browser
-    console.log("document", document);
     canvas = document.querySelector('canvas');
-    console.log("canvas", canvas);
-
-    console.log("canvas width", canvas.width);
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    console.log("canvas width after", canvas.width);
+    var mainWrap = canvas.parentNode.parentNode.parentNode;
+    var w = mainWrap.offsetWidth;
+    var h = mainWrap.offsetHeight;
+    console.log("mainWrap", mainWrap);
+    console.log("mainWrap w", w);
+    console.log("mainWrap h", h);
+    // canvas.width = w - 5;
+    // canvas.height = h - 2;
 
     drawGrid();
 
     canvas.addEventListener("dragover", dragOver);
-
+    canvas.addEventListener("mousedown", (event) => {selecting = true;});
+    canvas.addEventListener("mouseup", (event) => {selecting = false;});
+    canvas.addEventListener("mouseleave", canvasMouseLeave);
+    window.addEventListener("mousemove", boxSelect);
   }
   
 }
   
+function canvasMouseLeave(event) {
+  console.log("event", event);
+  console.log("window dims", {w: window.innerWidth, h: window.innerHeight});
+}
+
+function boxSelect(event) {
+  if (selecting) {
+    console.log("selecting");
+  }
+}
+
 function dragOver(event) {
   event.preventDefault();
 }

@@ -82,7 +82,12 @@ export default {
           icon: 'mdi-chart-bubble',
           title: 'Board',
           to: '/board'
-        }
+        },
+        {
+          icon: 'mdi-chart-bubble',
+          title: 'Test',
+          to: '/test'
+        },
       ],
       miniVariant: false,
       right: true,

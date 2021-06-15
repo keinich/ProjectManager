@@ -1,94 +1,6 @@
 <template>
-  <div id="canvas-wrap" dropzone="true">
-    <div class="toolbar card" style="height: 5rem">
-      <ul class="tool-list">
-        <li class="tool">
-          <button type="button" data-command="justifyLeft" class="tool--btn">
-            <i class="fas fa-align-left"></i>
-          </button>
-        </li>
-        <li class="tool">
-          <button type="button" data-command="justifyCenter" class="tool--btn">
-            <i class="fas fa-align-center"></i>
-          </button>
-        </li>
-        <li class="tool">
-          <button type="button" data-command="bold" class="tool--btn">
-            <i class="fas fa-bold"></i>
-          </button>
-        </li>
-        <li class="tool">
-          <button type="button" data-command="italic" class="tool--btn">
-            <i class="fas fa-italic"></i>
-          </button>
-        </li>
-        <li class="tool">
-          <button type="button" data-command="underline" class="tool--btn">
-            <i class="fas fa-underline"></i>
-          </button>
-        </li>
-        <li class="tool">
-          <button
-            type="button"
-            data-command="insertOrderedList"
-            class="tool--btn"
-          >
-            <i class="fas fa-list-ol"></i>
-          </button>
-        </li>
-        <li class="tool">
-          <button
-            type="button"
-            data-command="insertUnorderedList"
-            class="tool--btn"
-          >
-            <i class="fas fa-list-ul"></i>
-          </button>
-        </li>
-        <li class="tool">
-          <button type="button" data-command="createlink" class="tool--btn">
-            <i class="fas fa-link"></i>
-          </button>
-        </li>
-      </ul>
-    </div>
-
-    <div
-      id="card-0"
-      class="card"
-      style="visibility: hidden"
-      draggable="true"
-      dropzone="false"
-    >
-      <div class="texteditor" contenteditable="false" dropzone="false"></div>
-      <i class="fas fa-expand resizer" draggable="true"></i>
-    </div>
-
+  <div id="test123" dropzone="true" style="width: 100%; height: 100%;">
     <canvas dropzone="true" id="maincanvas"> </canvas>
-
-    <div id="card-templates">
-      <i
-        class="fas fa-sticky-note fa-xs draggable tooltip"
-        draggable="true"
-        style="color: grey"
-        id="note"
-        ><span class="tooltiptext">Note</span></i
-      >
-      <i
-        class="fas fa-columns fa-xs draggable tooltip"
-        draggable="true"
-        style="color: grey"
-        id="column"
-        ><span class="tooltiptext">Column</span></i
-      >
-      <i
-        class="fas fa-clipboard fa-xs draggable tooltip"
-        draggable="true"
-        style="color: grey"
-        id="board"
-        ><span class="tooltiptext">Board</span></i
-      >
-    </div>
   </div>
 </template>
 
@@ -118,32 +30,9 @@ export default {
   },
 
   async fetch() {
-    await this.getCards();
-    console.log(this.cards);
-
-    this.placeCards();
   },
 
   mounted() {
-    console.log("mounted start");
-    cardBoard.init();
-
-    var cont = document.getElementById("canvas-wrap");
-
-    cont.addEventListener("drop", this.drop);
-    cont.addEventListener("dragover", this.dragover);
-
-    var noteTemplate = document.getElementById("note");
-
-    console.log("noteTemplate", noteTemplate);
-
-    noteTemplate.addEventListener("dragstart", this.dragStartTemplate);
-
-    var canvasElement = document.getElementById("maincanvas");
-    canvasElement.addEventListener("click", this.deselectCards);
-
-    this.placeCards();
-    textEditor.init();
   },
 
   methods: {
